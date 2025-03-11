@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          resources:    # ✅ ADD THIS SECTION
+            limits:
+              cpu: "500m"    # Max 0.5 CPU cores
+              memory: "512Mi" # Max 512MB RAM
+            requests:
+              cpu: "250m"    # Requests 0.25 CPU cores
+              memory: "256Mi" # Requests 256MB RAM
