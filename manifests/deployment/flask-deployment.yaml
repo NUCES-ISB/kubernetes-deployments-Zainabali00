@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: flask-app
+          image: flask-app:latest
+          imagePullPolicy: Never 
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          resources:    # ✅ ADD THIS SECTION
+            limits:
+              cpu: "500m"    # Max 0.5 CPU cores
+              memory: "512Mi" # Max 512MB RAM
+            requests:
+              cpu: "250m"    # Requests 0.25 CPU cores
+              memory: "256Mi" # Requests 256MB RAM
